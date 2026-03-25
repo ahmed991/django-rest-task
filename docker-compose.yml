@@ -15,6 +15,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=db_service
       - DB_PORT=5432
+    networks:
+      - django_network
 
   db_service:
     image: postgis/postgis:16-master
@@ -29,5 +31,11 @@ services:
       - MAX_CLIENT_CONN=200
     ports:
       - "${DB_PORT}:5432"
+    networks:
+      - django_network
 volumes:
   postgres_data:
+
+networks:
+  django_network:
+    # external: true
