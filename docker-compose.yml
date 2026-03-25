@@ -1,0 +1,17 @@
+services:
+  db_service:
+    build: .
+    image: postgis/postgis:17-master
+    container_name: postgres
+    volumes:
+      - ./local/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - MAX_CLIENT_CONN=200
+    ports:
+      - ${DB_PORT}
+
+volumes:
+  postgres_data:
