@@ -5,7 +5,8 @@ from django.contrib.gis.db import models
 class Municipalities(models.Model):
     id  = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
-    geom = models.MultiPolygonField()
+    code = models.CharField(max_length=255, default="")
+    geom = models.MultiPolygonField(srid=4326)
 
     def __str__(self):
         return self.name
