@@ -6,19 +6,21 @@ from aiInfraTask.quickstart.seriallizers import GroupSerializer, UserSerializer,
 from .models import Municipalities
 from django.shortcuts import render
 from django.contrib.gis.geos import Polygon
-
-
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
 
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -27,24 +29,27 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Group.objects.all().order_by("name")
+    authentication_classes = [JWTAuthentication]
+
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
-
-class MunicipalitiesList(generics.ListCreateAPIView):
+class MunicipalityViewSet(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = MunicipalitiesSerializer
-
-
+    queryset = Municipalities.objects.all()
 
     def get_queryset(self):
-        queryset = Municipalities.objects.all()
+        queryset = self.queryset
 
         bbox = self.request.query_params.get('in_bbox', None)
 
         if(bbox):
             min_lng, min_lat, max_lng, max_lat = map(float, bbox.split(','))
             bbox_geom = Polygon.from_bbox((min_lng, min_lat, max_lng, max_lat))
+            bbox_geom.srid = 4326
 
 
             # bbox_geom = GEOSGeometry(
@@ -56,27 +61,35 @@ class MunicipalitiesList(generics.ListCreateAPIView):
             queryset = queryset.filter(geom__intersects=bbox_geom)
         
         return queryset
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.delete()
 
     
     # queryset = Municipalities.objects.all()
     # serializer_class = MunicipalitiesSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# class MunicipalitiesCreate(generics.CreateAPIView):
-#     queryset = Municipalities.objects.all()
-#     serializer_class = MunicipalitiesSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # class MunicipalitiesCreate(generics.CreateAPIView):
+    #     queryset = Municipalities.objects.all()
+    #     serializer_class = MunicipalitiesSerializer
+    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-# class MunicipalitiesDetail(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Municipalities.objects.all()
-#     serializer_class = MunicipalitiesSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # class MunicipalitiesDetail(generics.RetrieveUpdateDestroyAPIView):
+    #     queryset = Municipalities.objects.all()
+    #     serializer_class = MunicipalitiesSerializer
+    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-# class MunicipalitiesUpdate(generics.UpdateAPIView):
-#     queryset = Municipalities.objects.all()
-#     serializer_class = MunicipalitiesSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # class MunicipalitiesUpdate(generics.UpdateAPIView):
+    #     queryset = Municipalities.objects.all()
+    #     serializer_class = MunicipalitiesSerializer
+    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 # class 
