@@ -5,6 +5,8 @@ from django.contrib.gis.geos import GEOSGeometry
 from aiInfraTask.quickstart.seriallizers import GroupSerializer, UserSerializer, MunicipalitiesSerializer
 from .models import Municipalities
 from django.shortcuts import render
+from django.contrib.gis.geos import Polygon
+
 
 
 
@@ -42,14 +44,16 @@ class MunicipalitiesList(generics.ListCreateAPIView):
 
         if(bbox):
             min_lng, min_lat, max_lng, max_lat = map(float, bbox.split(','))
+            bbox_geom = Polygon.from_bbox((min_lng, min_lat, max_lng, max_lat))
 
-            bbox_geom = GEOSGeometry(
-                f'POLYGON(({min_lng} {min_lat}, {max_lng} {min_lat}, {max_lng} {max_lat},{min_lng} {max_lat}, {min_lng} {min_lat}))',
-                srid=4326
-            )
+
+            # bbox_geom = GEOSGeometry(
+            #     f'POLYGON(({min_lng} {min_lat}, {max_lng} {min_lat}, {max_lng} {max_lat},{min_lng} {max_lat}, {min_lng} {min_lat}))',
+            #     srid=4326
+            # )
             print(bbox_geom)
 
-            queryset = queryset.filter(location_within=bbox_geom)
+            queryset = queryset.filter(geom__intersects=bbox_geom)
         
         return queryset
 
