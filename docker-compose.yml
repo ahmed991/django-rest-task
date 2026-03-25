@@ -1,4 +1,21 @@
 services:
+  web:
+    build: .
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_service
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db_service
+      - DB_PORT=5432
+
   db_service:
     image: postgis/postgis:16-master
     container_name: postgres
@@ -9,10 +26,8 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - DB_HOST = ${DB_HOST}
       - MAX_CLIENT_CONN=200
     ports:
       - "${DB_PORT}:5432"
-
 volumes:
   postgres_data:

@@ -1,15 +1,32 @@
-# Copyright 2024 amicroservice author.
+FROM python:3.11
 
-
-# Use the official Python image from the Docker Hub
-FROM python:3.12-slim
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements.txt file into the container
-COPY requirements.txt .
+# Install system dependencies (GeoDjango stack)
+RUN apt-get update && apt-get install -y \
+    gdal-bin \
+    libgdal-dev \
+    libpq-dev \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install the Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# GDAL env vars (important!)
+ENV GDAL_LIBRARY_PATH=/usr/lib/libgdal.so
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
+ENV C_INCLUDE_PATH=/usr/include/gdal
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install Python deps
+COPY requirements.txt .
 RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project
+COPY . .
+
+EXPOSE 8000
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
