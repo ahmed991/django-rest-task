@@ -10,6 +10,7 @@ env/
 .venv/
 env.bak/
 venv.bak/
+django-api
 
 # Distribution / packaging
 build/
@@ -45,7 +46,6 @@ staticfiles/
 
 # Environment variables / secrets
 .env
-.env.*
 
 # IDEs / editors
 .vscode/
