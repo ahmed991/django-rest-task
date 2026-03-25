@@ -1,5 +1,7 @@
 Django~=4.2
 djangorestframework~=3.14.0
+djangorestframework-gis
 drf_yasg~=1.21.4
 psycopg2-binary~=2.9.6
 geopandas
+djangorestframework_simplejwt
