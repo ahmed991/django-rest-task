@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets, generics
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from django.contrib.gis.geos import GEOSGeometry
 from aiInfraTask.quickstart.seriallizers import GroupSerializer, UserSerializer, MunicipalitiesSerializer
 from .models import Municipalities
@@ -15,10 +14,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-
-
+    permission_classes = [permissions.IsAuthenticated]
     queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
 
@@ -32,12 +28,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class MunicipalityViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
     serializer_class = MunicipalitiesSerializer
     queryset = Municipalities.objects.all()
 
@@ -62,6 +58,8 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
         
         return queryset
     def perform_create(self, serializer):
+        geometry_geojson = self.request.query_params.get('geom',None)
+        print(geometry_geojson)
         serializer.save()
 
     def perform_update(self, serializer):
@@ -69,8 +67,7 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         instance.delete()
-
-    
+            
     # queryset = Municipalities.objects.all()
     # serializer_class = MunicipalitiesSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
