@@ -1,5 +1,7 @@
 from django.contrib.auth.models import Group, User
-from rest_framework import permissions, viewsets, generics
+from rest_framework import permissions, viewsets
+from rest_framework.response import Response
+from rest_framework import status
 from django.contrib.gis.geos import GEOSGeometry
 from aiInfraTask.quickstart.seriallizers import GroupSerializer, UserSerializer, MunicipalitiesSerializer
 from .models import Municipalities
@@ -57,17 +59,43 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(geom__intersects=bbox_geom)
         
         return queryset
-    def perform_create(self, serializer):
-        geometry_geojson = self.request.query_params.get('geom',None)
-        print(geometry_geojson)
-        serializer.save()
+    
+    def create(self, request, *args, **kwargs):
+
+        name = request.data.get('name')
+        code = request.data.get('code')
+        geometry = request.data.get('geom')
+
+        if not name or not code:
+            return Response(
+                {"detail": "Both 'name' and 'code' are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if Municipalities.objects.filter(code=code).exists():
+            return Response(
+                {"detail": f"Municipality with code '{code}' already exists."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            {"success": f"New municipality created with name '{name}', code: '{code}'"},
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+    
 
     def perform_update(self, serializer):
         serializer.save()
 
     def perform_destroy(self, instance):
         instance.delete()
-            
+
+
+
+
     # queryset = Municipalities.objects.all()
     # serializer_class = MunicipalitiesSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
