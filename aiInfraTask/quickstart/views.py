@@ -13,7 +13,6 @@ from rest_framework.decorators import action
 
 
 class MunicipalityViewSet(viewsets.ModelViewSet):
-    # authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = MunicipalitiesSerializer
     queryset = Municipalities.objects.all()
