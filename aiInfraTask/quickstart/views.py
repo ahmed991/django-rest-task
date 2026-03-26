@@ -8,7 +8,6 @@ from .models import Municipalities
 from django.shortcuts import render
 from django.contrib.gis.geos import Polygon
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
 
 
