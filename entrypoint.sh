@@ -5,6 +5,8 @@ echo "Waiting for database..."
 sleep 2
 
 echo "Running migrations..."
+
+python manage.py makemigrations
 python manage.py migrate
 
 echo "Creating superuser if it doesn't exist..."
