@@ -27,6 +27,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
+RUN apt-get update && apt-get install -y dos2unix \
+    && dos2unix /app/entrypoint.sh \
+    && chmod +x /app/entrypoint.sh
+
 EXPOSE $DJANGO_PORT
 
 CMD python manage.py runserver 0.0.0.0:$DJANGO_PORT
