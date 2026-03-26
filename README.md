@@ -8,7 +8,7 @@ https://www.geeksforgeeks.org/python/jwt-authentication-with-django-rest-framewo
 https://django-rest-framework-simplejwt.readthedocs.io/en/latest/getting_started.html#installation
 
 
-http://localhost:8000/get/?in_bbox=4.636879905143701,%2052.18962248356709,%205.30002510140082,%2052.44034985332962
+http://localhost:8000/api/municipalities/bbox_filter/?in_bbox=4.636879905143701,%2052.18962248356709,%205.30002510140082,%2052.44034985332962
 
 
 
@@ -33,3 +33,15 @@ test create geometry
     ]
   }
 }
+
+
+for update
+
+{
+  "name": "Updated Municipality",
+  "code": "NL-NEW-001",
+  "geom": null
+}
+
+for custom endpoint (bbox_filter)
+https://www.django-rest-framework.org/api-guide/viewsets/#marking-extra-actions-for-routing
