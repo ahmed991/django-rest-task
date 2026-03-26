@@ -5,3 +5,5 @@ drf_yasg~=1.21.4
 psycopg2-binary~=2.9.6
 geopandas
 djangorestframework_simplejwt
+sqlalchemy
+geoalchemy2
