@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 echo "Waiting for database..."
 sleep 5
@@ -10,4 +11,4 @@ echo "Loading municipalities data..."
 python scripts/upload_data.py
 
 echo "Starting Django..."
-exec "$@"
+exec python manage.py runserver 0.0.0.0:${DJANGO_PORT}
