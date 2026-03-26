@@ -7,3 +7,4 @@ geopandas
 djangorestframework_simplejwt
 sqlalchemy
 geoalchemy2
+requests

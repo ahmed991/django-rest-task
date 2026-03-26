@@ -3,6 +3,9 @@ import geopandas as gpd
 import pandas as pd
 from sqlalchemy import create_engine, text
 from geoalchemy2 import Geometry
+import requests
+from shapely.geometry import mapping, MultiPolygon
+
 
 
 GEOJSON_PATH = os.getenv("GEOJSON_PATH", "/app/data/municipalities_nl.geojson")
@@ -15,6 +18,17 @@ DB_URL = os.getenv(
 
 TABLE_NAME = "quickstart_municipalities"
 
+def get_auth_token(token_url, username, password):
+    token_url = token_url
+    myobj = {'username': username, 'password':password}
+    token_response = requests.post(token_url,myobj)
+    
+    token_response.raise_for_status()
+
+    # Parse JSON
+    token = token_response.json().get("access")
+    print(token)
+    return token
 
 def load_data():
     gdf = gpd.read_file(GEOJSON_PATH).set_crs(4326)
@@ -22,6 +36,10 @@ def load_data():
     df = pd.read_csv(CSV_PATH)
     return gdf, df
 
+def ensure_multipolygon(geom):
+    if geom.geom_type == "Polygon":
+        return MultiPolygon([geom])
+    return geom
 
 def preprocess(gdf, df):
     df_small = df[["Gemeentenaam", "GemeentecodeGM"]]
@@ -70,18 +88,39 @@ def filter_new_records(gdf, common, existing_gdf):
     return gdf
 
 
-def insert_data(engine, gdf):
-    if gdf.empty:
-        return
+def insert_data(gdf, token):
+    headers = {
+        "Authorization": f"Bearer {token}",   # 👈 JWT format
+        "Content-Type": "application/json"
+    }
 
-    gdf.to_postgis(
-        TABLE_NAME,
-        engine,
-        if_exists="append",
-        index=False,
-        dtype={"geom": Geometry("MULTIPOLYGON", srid=4326)}
-    )
+    for _, row in gdf.iterrows():
+        geom = row.geom
+        if geom is None:
+            continue
 
+        try:
+            geom = ensure_multipolygon(geom)
+
+            payload = {
+                "name": row["name"],
+                "code": row["code"],
+                "geom": mapping(geom)
+            }
+
+            response = requests.post(
+                "http://0.0.0.0:8005/api/municipalities/",
+                json=payload,   
+                headers=headers
+            )
+
+            if response.status_code != 201:
+                print(f"Failed for {row['name']}: {response.text}")
+            else:
+                print(f"Inserted: {row['name']}")
+
+        except Exception as exc:
+            print(f"Skipping '{row['name']}': {exc}")
 
 def sync_sequence(engine):
     with engine.begin() as conn:
@@ -94,6 +133,7 @@ def sync_sequence(engine):
 
 
 def main():
+    token = get_auth_token('http://0.0.0.0:8005/api/token/', 'root', 'root')
     gdf, df = load_data()
     gdf, common = preprocess(gdf, df)
 
@@ -103,7 +143,7 @@ def main():
 
     gdf_new = filter_new_records(gdf, common, existing_gdf)
 
-    insert_data(engine, gdf_new)
+    insert_data(gdf_new, token)
     sync_sequence(engine)
 
 
