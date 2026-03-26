@@ -37,7 +37,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication', 
     ],
     #Define pagination size
-    "PAGE_SIZE": 20,
+    "PAGE_SIZE": 100,
 }
 # Application definition
 
