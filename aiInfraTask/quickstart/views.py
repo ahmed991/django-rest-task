@@ -12,32 +12,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action
 
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all().order_by("-date_joined")
-    serializer_class = UserSerializer
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-
-    queryset = Group.objects.all().order_by("name")
-    authentication_classes = [JWTAuthentication]
-
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
 class MunicipalityViewSet(viewsets.ModelViewSet):
     # authentication_classes = [JWTAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = MunicipalitiesSerializer
     queryset = Municipalities.objects.all()
 
@@ -113,26 +90,3 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-
-    # queryset = Municipalities.objects.all()
-    # serializer_class = MunicipalitiesSerializer
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    # class MunicipalitiesCreate(generics.CreateAPIView):
-    #     queryset = Municipalities.objects.all()
-    #     serializer_class = MunicipalitiesSerializer
-    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    # class MunicipalitiesDetail(generics.RetrieveUpdateDestroyAPIView):
-    #     queryset = Municipalities.objects.all()
-    #     serializer_class = MunicipalitiesSerializer
-    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-    # class MunicipalitiesUpdate(generics.UpdateAPIView):
-    #     queryset = Municipalities.objects.all()
-    #     serializer_class = MunicipalitiesSerializer
-    #     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-# class 
