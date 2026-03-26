@@ -2,9 +2,11 @@ services:
   web:
     build: .
     container_name: django_app
+    entrypoint: ["/app/entrypoint.sh"]
     command: python manage.py runserver 0.0.0.0:${DJANGO_PORT}
     volumes:
       - .:/app
+      - ./data:/app/data
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
     depends_on:
