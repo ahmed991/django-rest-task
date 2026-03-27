@@ -62,7 +62,7 @@ class MunicipalityViewSet(viewsets.ModelViewSet):
         create_instance = serializer.save()
         headers = self.get_success_headers(serializer.data)
         return Response(
-            {"success": f"New municipality created with name '{name}', code: '{code}' and id {create_instance.id}"},
+            {'id': create_instance.id,"message": f"New municipality created with name '{name}', code: '{code}' and id {create_instance.id}"},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
