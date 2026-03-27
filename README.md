@@ -36,6 +36,11 @@ docker compose up
 docker compose exec web python scripts/upload_data.py --username=rootuser --password=rootpassword
 ```
 
+## Tests for Municipality CRUD endpoints 
+```bash
+docker compose exec web python manage.py test
+```
+
 > Default credentials — **username:** `rootuser`, **password:** `rootpassword`.
 > To create your own: `docker compose exec web python manage.py createsuperuser`
 

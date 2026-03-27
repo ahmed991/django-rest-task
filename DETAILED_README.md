@@ -237,6 +237,15 @@ GET /api/municipalities/bbox_filter/?in_bbox=5.855075164747461,52.84452676586113
 
 ## Testing the API
 
+### Automated Tests
+```bash
+docker compose exec web python manage.py test
+```
+
+Covers: create, list, bbox filter, patch, and delete endpoints.
+
+---
+
 ### Browser (Browsable API)
 
 1. Log in at `http://localhost:8005/admin/`
