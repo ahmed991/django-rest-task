@@ -66,4 +66,4 @@ Use the token as `Authorization: Bearer <access_token>` on all requests.
 | `DELETE` | `/api/municipalities/{id}/` | Delete |
 | `GET` | `/api/municipalities/bbox_filter/?in_bbox=min_lng,min_lat,max_lng,max_lat` | Filter by bounding box |
 
-For full request/response details and edge cases see [DETAILED_README.md](UPDATED_README.md).
+For full request/response details and edge cases see [DETAILED_README.md](UPDATED_README.md)](https://github.com/ahmed991/django-rest-task/blob/assignment-django/UPDATED_README.md).
