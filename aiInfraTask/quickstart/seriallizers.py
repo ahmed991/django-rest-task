@@ -15,6 +15,12 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["url", "name"]
 
 class MunicipalitiesSerializer(GeoFeatureModelSerializer):
+    """
+    Serializer for municipalities geographic features.
+
+    Converts Municipalities model instances to JSON representation with geographic data.
+    Includes municipality id, name, code, and geometry(MultiPolygon) information.
+    """
     class Meta:
         model = Municipalities
         fields = ["id", "name", "code"]

@@ -12,11 +12,14 @@ from rest_framework.decorators import action
 
 
 class MunicipalityViewSet(viewsets.ModelViewSet):
+    """
+    MunicipalityViewSet
+    API ViewSet for managing municipalities with BBOX filtering and duplicate prevention.
+    Provides CRUD operations with authentication, geospatial filtering, and code uniqueness validation.
+    """
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = MunicipalitiesSerializer
     queryset = Municipalities.objects.all()
-
-
 
     # BBOX filter endpoint
 

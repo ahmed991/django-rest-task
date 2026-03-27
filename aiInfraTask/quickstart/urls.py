@@ -3,6 +3,7 @@ from rest_framework import routers
 
 from aiInfraTask.quickstart import views
 
+# Registering municipalities viewSet
 router = routers.DefaultRouter()
 router.register(r"municipalities", views.MunicipalityViewSet)
 

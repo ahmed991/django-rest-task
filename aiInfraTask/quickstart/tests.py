@@ -36,6 +36,11 @@ patch_object = {
 
 
 class MunicipalityTests(TestCase):
+    """
+    Test suite for Municipality API endpoints.
+    Tests CRUD operations, listing, and bounding box filtering for municipalities.
+    """
+
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='pass')
         self.client = APIClient()
@@ -58,10 +63,16 @@ class MunicipalityTests(TestCase):
 
     def test_patch_municipality(self):
         response = self.client.post('/api/municipalities/', test_create_object, format='json')
-        print(response.data)
-        # id = response.data['properties']['id']
-        # response = self.client.patch(f'/api/municipalities/{id}/', patch_object, format='json')
-        # self.assertEqual(response.status_code, 200)
+        id = response.data['id']
+        response = self.client.patch(f'/api/municipalities/{id}/', patch_object, format='json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_municipality(self):
+        response = self.client.post('/api/municipalities/', test_create_object, format='json')
+        id = response.data['id']
+        response = self.client.delete(f'/api/municipalities/{id}/')
+        self.assertEqual(response.status_code, 204)
+
 
 
 
